@@ -3,4 +3,6 @@ Team Nextcloud Integration
 
 ## Project Ideation Wiki
 
-To be Updated 
+https://github.com/airavata-courses/airavata-nextcoud/wiki/Project-Ideation
+
+ 
