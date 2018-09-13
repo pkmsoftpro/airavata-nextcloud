@@ -20,14 +20,15 @@
 */
 package org.seagrid.desktop.connectors.storage;
 
-import com.github.sardine.DavResource;
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
 import javafx.scene.control.ProgressIndicator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.List;
 import java.util.Vector;
 
 
@@ -45,33 +46,15 @@ public class GuiDirDownloadTask extends GuiFileTask {
 
     @Override
     protected Boolean call() throws Exception {
-        String fileName="CalculateSizeDownloadFolderLog.txt";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-
-        String fileName2="CalculateSizeNextcloudDownloadFolderLog.txt";
-        BufferedWriter writer2 = new BufferedWriter(new FileWriter(fileName2));
-        calculateNextcloudTotalSize(remoteDirPath, writer2);
-        calculateTotalSize(remoteDirPath, writer);
-        writer.close();
-        writer2.close();
+        calculateTotalSize(remoteDirPath);
         return downloadDir(remoteDirPath, localDirPath);
-        //return nextcloudDownloadDir(remoteDirPath, localDirPath);
     }
 
     public Boolean downloadDir(String remoteDirPath, String localDirPath) throws SftpException, IOException {
-
-        String fileName="DirDownloadLog.txt";
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-        writer.write("\nRemotepath ---> "+remoteDirPath);
-        writer.write("\nLocalpath--->"+localDirPath);
-        writer.close();
-
-        //Creating the local directory if the path doesn't exist
         File localDir = new File(localDirPath);
         if(!localDir.exists()){
             localDir.mkdirs();
         }
-
         Vector<ChannelSftp.LsEntry> lsEntries = channelSftp.ls(remoteDirPath);
         for(ChannelSftp.LsEntry lsEntry : lsEntries){
             if(lsEntry.getFilename().equals(".") || lsEntry.getFilename().equals("..")){
@@ -101,57 +84,18 @@ public class GuiDirDownloadTask extends GuiFileTask {
         return true;
     }
 
-    
-
-    private void calculateTotalSize(String remoteDirPath, BufferedWriter writer) throws SftpException, IOException {
+    private void calculateTotalSize(String remoteDirPath) throws SftpException, IOException {
         Vector<ChannelSftp.LsEntry> lsEntries = channelSftp.ls(remoteDirPath);
-
         for(ChannelSftp.LsEntry lsEntry : lsEntries){
             if(lsEntry.getFilename().equals(".") || lsEntry.getFilename().equals("..")){
                 continue;
             }
             if(lsEntry.getAttrs().isDir()){
                 String tempRemoteDir = remoteDirPath + "/" + lsEntry.getFilename();
-                calculateTotalSize(tempRemoteDir, writer);
-            }else {
+                calculateTotalSize(tempRemoteDir);
+            }else{
                 totalSize += lsEntry.getAttrs().getSize();
-                writer.write("\n Total Size"+totalSize);
             }
         }
     }
-
-    private void calculateNextcloudTotalSize(String remoteDirPath, BufferedWriter writer2) throws SftpException, IOException {
-        //Vector<ChannelSftp.LsEntry> lsEntries = channelSftp.ls(remoteDirPath);
-        List<DavResource> davResource = next.listDirectories(remoteDirPath);
-        // for(ChannelSftp.LsEntry lsEntry : lsEntries){
-        int count = 0;
-        for (DavResource res : davResource) {
-            if(count != 0) {
-                if (res.getName().equals(".") || res.getName().equals("..")) {
-                    continue;
-                }
-                if (res.isDirectory()) {
-                    String tempRemoteDir = remoteDirPath + "/" + res.getName();
-                    calculateNextcloudTotalSize(tempRemoteDir, writer2);
-                } else {
-                    totalSize += res.getContentLength().intValue();
-                    writer2.write("\n TotalSize" + totalSize);
-                }
-            }
-            count++;
-        }
-    }
-
-
-    public boolean nextcloudDownloadDir(String remoteDirPath, String localDirPath) throws IOException {
-
-        String downlfile="DownloadDirNextcloudEntry.txt";
-        BufferedWriter writer1 = new BufferedWriter(new FileWriter(downlfile));
-        if(next.downloadFolder(remoteDirPath, localDirPath, writer1)) {
-            writer1.close();
-            return true;
-        }
-        return false;
-    }
-
 }

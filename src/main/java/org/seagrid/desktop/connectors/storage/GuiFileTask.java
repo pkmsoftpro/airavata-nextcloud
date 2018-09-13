@@ -36,8 +36,6 @@ public abstract class GuiFileTask extends Task<Boolean> {
     protected Channel channel = null;
     protected ChannelSftp channelSftp = null;
 
-    protected NextcloudAdapter next = new NextcloudAdapter();
-
     public GuiFileTask() throws JSchException {
         JSch jsch = new JSch();
         session = jsch.getSession(SEAGridContext.getInstance().getUserName(),

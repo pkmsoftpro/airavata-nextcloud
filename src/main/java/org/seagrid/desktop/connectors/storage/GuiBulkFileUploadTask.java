@@ -22,17 +22,12 @@ package org.seagrid.desktop.connectors.storage;
 
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.SftpException;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import org.seagrid.desktop.util.SEAGridContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Map;
-import java.util.logging.FileHandler;
-import java.util.logging.SimpleFormatter;
 
 
 public class GuiBulkFileUploadTask extends GuiFileTask {
@@ -47,37 +42,18 @@ public class GuiBulkFileUploadTask extends GuiFileTask {
 
     @Override
     protected Boolean call() throws Exception {
-        //return uploadFiles(this.uploadFiles);
-        //next.UploadFile(uploadFiles.get())
-        return uploadtonextcloud();
+        return uploadFiles(this.uploadFiles);
     }
 
     public boolean uploadFiles(Map<String, File> uploadFiles) throws IOException, SftpException {
         int numberOfFiles = uploadFiles.size();
         int index = 1;
-        for(String remoteFilePath : uploadFiles.keySet()) {
+        for(String remoteFilePath : uploadFiles.keySet()){
             remoteFilePath = remoteFilePath.replace("\\","/");
-                //System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-                //Alert alert = new Alert(Alert.AlertType.CONFIRMATION, remoteFilePath, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-                //alert.show();
-
-            //System.out.println(remoteFilePath);
-            //My code
-            /*
-            String str = "Hello";
-            String fileName="create.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-            writer.write(""+remoteFilePath+"\n");
-            */
             createRemoteParentDirsIfNotExists(Paths.get(remoteFilePath).getParent().toString());
-
             OutputStream remoteOutputStream = new BufferedOutputStream(channelSftp.put(remoteFilePath));
             File localFile = uploadFiles.get(remoteFilePath);
-            String localpath = localFile.getPath();
-            String remotepath = "Documents" + remoteFilePath;
-            //writer.write(""+next.UploadFile("/Users/kkotabag/Desktop/test/Fileupload/third.txt","/Documents/third.txt")+"");
             InputStream localInputStream = new FileInputStream(localFile);
-            //writer.close();
             long fileSize = localFile.length();
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead = -1;
@@ -95,33 +71,6 @@ public class GuiBulkFileUploadTask extends GuiFileTask {
             remoteOutputStream.close();
             localInputStream.close();
             index++;
-        }
-        return true;
-    }
-
-
-    public boolean uploadtonextcloud() throws IOException {
-        for(String remoteFilePath : uploadFiles.keySet()){
-            remoteFilePath = remoteFilePath.replace("\\","/");
-            //System.out.println(entry.getKey() + ":" + entry.getValue().toString());
-            //Alert alert = new Alert(Alert.AlertType.CONFIRMATION, remoteFilePath, ButtonType.YES, ButtonType.NO, ButtonType.CANCEL);
-            //alert.show();
-            //System.out.println(remoteFilePath);
-            //My code
-            String str = "Hello";
-            String fileName="create.txt";
-            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
-            writer.write(""+remoteFilePath+"\n");
-            File localFile = uploadFiles.get(remoteFilePath);
-            String localpath = localFile.getPath();
-            writer.write(localpath);
-
-            String remotepath = remoteFilePath;
-
-            writer.write(""+next.UploadFile(localpath,remotepath)+"");
-            //writer.write(SEAGridContext.getInstance().getOAuthToken());
-            InputStream localInputStream = new FileInputStream(localFile);
-            writer.close();
         }
         return true;
     }

@@ -43,33 +43,17 @@ public class GuiFileDownloadTask extends GuiFileTask {
 
     @Override
     protected Boolean call() throws Exception {
-        String downlfile="DownloadFile.txt";
-        BufferedWriter writer1 = new BufferedWriter(new FileWriter(downlfile));
-        writer1.write("Downloading file : \n");
-        writer1.write("\nDownload File Remote path:--->"+remoteFilePath);
-        writer1.write("\nDownload File Local path:--->"+localFilePath);
-        writer1.close();
-        //return downloadFile(remoteFilePath, localFilePath);
-        return nextcloudDownloadFile(remoteFilePath, localFilePath);
+        return downloadFile(remoteFilePath, localFilePath);
     }
 
     public Boolean downloadFile(String remoteFilePath, String localFilePath) throws SftpException, IOException {
-        String downlfile="DownloadFile2.txt";
-        BufferedWriter writer2 = new BufferedWriter(new FileWriter(downlfile));
-        writer2.write("\nDownload File Remote path:--->"+remoteFilePath);
-        writer2.write("\nDownload File Local path:--->"+localFilePath);
-
         remoteFilePath = remoteFilePath.replace("\\","/");
-        writer2.write("\nDownload File Remote path after replacement:--->"+remoteFilePath);
-        writer2.close();
-
         remoteFilePath = remoteFilePath.replaceAll(SEAGridContext.getInstance().getUserName(), "");
         InputStream remoteInputStream = new BufferedInputStream(channelSftp.get(remoteFilePath));
         File localFile = new File(localFilePath);
         if(!localFile.getParentFile().exists()){
             localFile.getParentFile().mkdirs();
         }
-
         OutputStream localOutputStream = new FileOutputStream(localFile);
         SftpATTRS attrs = channelSftp.lstat(remoteFilePath);
         long fileSize = attrs.getSize();
@@ -91,30 +75,4 @@ public class GuiFileDownloadTask extends GuiFileTask {
 
         return true;
     }
-/*
-    public boolean nextcloudDownloadFile(String remoteFilePath, String localFilePath) throws IOException {
-        String downlfile="DownloadFile3.txt";
-        BufferedWriter writer3 = new BufferedWriter(new FileWriter(downlfile));
-        writer3.write("\nDownload File Remote path:--->"+remoteFilePath);
-        writer3.write("\nDownload File Local path:--->"+localFilePath);
-
-        remoteFilePath = remoteFilePath.replace("\\","/");
-        writer3.write("\nDownload File Remote path after replacement:--->"+remoteFilePath);
-
-        remoteFilePath = remoteFilePath.replaceAll(SEAGridContext.getInstance().getUserName(), "");
-        File localFile = new File(localFilePath);
-        if(!localFile.getParentFile().exists()){
-            localFile.getParentFile().mkdirs();
-            writer3.write("\nCreated the directory");
-        }
-        if(next.downloadFile(remoteFilePath,localFilePath)) {
-            writer3.write("Returning true");
-            writer3.close();
-            return true;
-        }
-        writer3.close();
-        return false;
-    }
-    */
-
 }

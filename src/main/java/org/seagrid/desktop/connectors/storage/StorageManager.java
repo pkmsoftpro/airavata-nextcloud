@@ -25,10 +25,7 @@ import org.seagrid.desktop.util.SEAGridContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Vector;
 
 public class StorageManager {
@@ -67,21 +64,16 @@ public class StorageManager {
         return instance;
     }
 
-    public Vector<ChannelSftp.LsEntry> getDirectoryListing(String path) throws SftpException, JSchException, IOException {
+    public Vector<ChannelSftp.LsEntry> getDirectoryListing(String path) throws SftpException, JSchException {
         //channel may get timeout
-        String DirectoryListings ="DirectoryListings2.txt";
-        BufferedWriter writ = new BufferedWriter(new FileWriter(DirectoryListings));
-        writ.write("\nPath to query and get the listings:--->"+path);
         if(channelSftp.isClosed()){
             connect();
         }
         channelSftp.cd(path);
-        writ.write("\nDirectory Listing names as that are part of the file path:--->"+channelSftp.ls(path));
-        writ.close();
         return channelSftp.ls(path);
     }
 
-    public void createSymLink(String oldPath, String newPath) throws JSchException, SftpException, IOException {
+    public void createSymLink(String oldPath, String newPath) throws JSchException, SftpException {
         if(channelSftp.isClosed()){
             connect();
         }
@@ -89,26 +81,20 @@ public class StorageManager {
         channelSftp.symlink(oldPath, newPath);
     }
 
-    private void createRemoteParentDirsIfNotExists(String parentDirPath) throws SftpException, IOException {
-        String createremotedir="CreateRemoteDirectory.txt";
-        BufferedWriter writ = new BufferedWriter(new FileWriter(createremotedir));
-        writ.write("Parent Directory Path to be added"+ parentDirPath);
+    private void createRemoteParentDirsIfNotExists(String parentDirPath) throws SftpException {
         String pwd = channelSftp.pwd();
         String[] folders = parentDirPath.split( "/" );
         for ( String folder : folders ) {
             if ( folder.length() > 0 ) {
                 try {
                     channelSftp.cd(folder);
-                    writ.write("Folder name"+folder);
                 }
                 catch ( SftpException e ) {
-                    writ.write("Folder Name"+folder);
                     channelSftp.mkdir( folder );
                     channelSftp.cd( folder );
                 }
             }
         }
-        writ.close();
         channelSftp.cd(pwd);
     }
 
