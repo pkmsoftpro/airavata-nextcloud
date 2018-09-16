@@ -59,7 +59,8 @@ public class PrestageUploadController {
 
     @FXML
     public void initialize() {
-
+        chosenFile.setTranslateX(85);
+        chosenFile.setTranslateY(3);
         pickFile.setOnAction(event -> {
             try {
                 fileChooser = new FileChooser();
@@ -69,7 +70,7 @@ public class PrestageUploadController {
                     String fileAsString = file.getName();
                     String remotePath = "/Documents/InputFiles/" + fileAsString;
                     String filePath = file.toString();
-                    chosenFile.setText("File:  " + fileAsString);
+                    chosenFile.setText(fileAsString);
                     uploadFiles.put(remotePath, file);
                 } else {
                     chosenFile.setText(null);
@@ -85,11 +86,13 @@ public class PrestageUploadController {
                 if (uploadFiles.size() > 0)
                 {
                     Service<Boolean> fileUploadService = getPreFileUploadService(uploadFiles);
+                    fileUploadService.setOnSucceeded(event2 -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("File Upload Status");
+                        alert.setContentText("File Upload Completed");
+                        alert.showAndWait();
+                    });
                     fileUploadService.start();
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("File Upload Status");
-                    alert.setContentText("File Upload Completed");
-                    alert.showAndWait();
                 }
             } catch (Exception e) {
 
