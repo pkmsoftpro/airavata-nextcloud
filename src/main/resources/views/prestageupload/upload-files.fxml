@@ -12,6 +12,8 @@
           <children>
             <GridPane fx:id="preuploadGridPane" prefHeight="120.0" prefWidth="250.0">
               <children>
+                <Label fx:id="chosenFile" maxHeight="25.0" prefHeight="25.0" prefWidth="788.0" text="" wrapText="false" VBox.vgrow="NEVER">
+                </Label>
                 <Label text="Select File" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                 <Button fx:id="pickFile" mnemonicParsing="false" text="Upload" GridPane.columnIndex="1"
                         GridPane.rowIndex="0" onAction="#initialize">
