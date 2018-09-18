@@ -68,6 +68,7 @@ import org.seagrid.desktop.ui.experiment.summary.ExperimentSummaryWindow;
 import org.seagrid.desktop.ui.home.model.ExperimentListModel;
 import org.seagrid.desktop.ui.home.model.ProjectTreeModel;
 import org.seagrid.desktop.ui.home.model.TreeModel;
+import org.seagrid.desktop.ui.prestageupload.PrestageUploadWindow;
 import org.seagrid.desktop.ui.project.ProjectWindow;
 import org.seagrid.desktop.ui.storage.MassStorageBrowserWindow;
 import org.seagrid.desktop.util.SEAGridConfig;
@@ -111,6 +112,9 @@ public class HomeController {
 
     @FXML
     private Button createExperimentButton;
+
+    @FXML
+    private Button uploadInputFilesButton;
 
     @FXML
     private TreeView<TreeModel> projectsTreeView;
@@ -218,7 +222,7 @@ public class HomeController {
         notificationLabel.setStyle("-fx-border-color: white;");
         notificationLabel.setMaxWidth(Double.MAX_VALUE);
         try{
-            java.util.List<Notification> messages = AiravataManager.getInstance().getNotifications();
+            List<Notification> messages = AiravataManager.getInstance().getNotifications();
             final Index index = new Index();
             index.index = 0;
             if (messages != null && messages.size() > 0) {
@@ -293,6 +297,13 @@ public class HomeController {
                 e.printStackTrace();
                 SEAGridDialogHelper.showExceptionDialogAndWait(e, "Exception Dialog", browseMassStorageBtn.getScene().getWindow(),
                         "Failed to open Storage Browser");
+            }
+        });
+        uploadInputFilesButton.setOnMouseClicked(event -> {
+            try {
+                PrestageUploadWindow.displayUploadFiles();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
         nanocadBtn.setOnAction(event ->
