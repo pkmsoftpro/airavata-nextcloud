@@ -156,11 +156,6 @@
               </HBox.margin>
             </Button>
             <Button fx:id="browseMassStorageBtn" mnemonicParsing="false" text="Storage" HBox.margin="$x5" />
-            <Button fx:id="uploadInputFilesButton" mnemonicParsing="false" text="Upload Input Files">
-              <HBox.margin>
-                <Insets bottom="3.0" right="3.0" top="3.0" fx:id="x5" />
-              </HBox.margin>
-            </Button>
             <Button id="browseMassStorageBtn" fx:id="nanocadBtn" mnemonicParsing="false" text="Nanocad" visible="false" HBox.margin="$x5" />
             <Button id="browseMassStorageBtn" fx:id="jamberooBtn" mnemonicParsing="false" text="Jamberoo" visible="false">
               <HBox.margin>
