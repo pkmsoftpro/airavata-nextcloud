@@ -20,14 +20,23 @@
  */
 package org.seagrid.desktop.ui.prestageupload.controller;
 
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import org.seagrid.desktop.connectors.NextcloudStorage.NextcloudFileUploadTask;
+import org.seagrid.desktop.ui.commons.SEAGridDialogHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PrestageUploadController {
     private final static Logger logger = LoggerFactory.getLogger(PrestageUploadController.class);
@@ -44,14 +53,75 @@ public class PrestageUploadController {
     public GridPane preuploadGridPane;
 
     @FXML
-    public void initialize() {
+    public Label chosenFile;
 
+    Map<String,File> uploadFiles = new HashMap<>();
+
+    @FXML
+    public void initialize() {
+        chosenFile.setTranslateX(85);
+        chosenFile.setTranslateY(3);
         pickFile.setOnAction(event -> {
-            fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Resource File");
-            File selectedFiles = fileChooser.showOpenDialog(null);
+            try {
+                fileChooser = new FileChooser();
+                fileChooser.setTitle("Open Resource File");
+                File file = fileChooser.showOpenDialog(null);
+                if (file != null) {
+                    String fileAsString = file.getName();
+                    String remotePath = "/Documents/InputFiles/" + fileAsString;
+                    String filePath = file.toString();
+                    chosenFile.setText(fileAsString);
+                    uploadFiles.put(remotePath, file);
+                } else {
+                    chosenFile.setText(null);
+                }
+
+            } catch (Exception ex) {
+                SEAGridDialogHelper.showExceptionDialog(ex, "Caught Exception", null, "Unable to select file");
+            }
         });
+
+        saveButton.setOnAction(event -> {
+            try {
+                if (uploadFiles.size() > 0)
+                {
+                    Service<Boolean> fileUploadService = getPreFileUploadService(uploadFiles);
+                    fileUploadService.setOnSucceeded(event2 -> {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("File Upload Status");
+                        alert.setContentText("File Upload Completed");
+                        alert.showAndWait();
+                    });
+                    fileUploadService.start();
+                }
+            } catch (Exception e) {
+
+            }
+        });
+
     }
 
+    public Service<Boolean> getPreFileUploadService(Map<String, File> uploadFiles) {
+        Service<Boolean> service = new Service<Boolean>() {
+            @Override
+            protected Task<Boolean> createTask() {
+                try {
+                    return new NextcloudFileUploadTask(uploadFiles);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    SEAGridDialogHelper.showExceptionDialogAndWait(e, "Exception Dialog", chosenFile.getScene().getWindow(),
+                            "Unable To Connect To File Server !");
+                }
+                return null;
+            }
+        };
+        SEAGridDialogHelper.showProgressDialog(service,"Progress Dialog",chosenFile.getScene().getWindow(),
+                "Uploading Experiment Input Files");
+        service.setOnFailed((WorkerStateEvent t) -> {
+            SEAGridDialogHelper.showExceptionDialogAndWait(service.getException(), "Exception Dialog",
+                    chosenFile.getScene().getWindow(), "File Upload Failed");
+        });
+        return service;
+    }
 
 }
