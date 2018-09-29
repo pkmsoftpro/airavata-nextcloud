@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  *
-*/
+ */
 package org.seagrid.desktop.ui.login.controller;
 
 import javafx.animation.Animation;
@@ -196,15 +196,17 @@ public class LoginController {
 
 
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+            /*logger.info("worker state changed: " + newValue);
+            logger.info("location=" + webEngine.getLocation());*/
             if (Worker.State.SUCCEEDED.equals(newValue)) {
                 String locationUrl = webEngine.getLocation();
                 location.setText(locationUrl);
                 Map<String, String> params = getQueryMap(locationUrl);
                 Stage stage = (Stage) loginButton.getScene().getWindow();
-               // if(params.containsKey("status")){
-                    //if(params.get("status").equals("ok")){
-                        if(params.containsKey("status")){
-                            if(params.get("status").equals("ok")){
+                // if(params.containsKey("status")){
+                //if(params.get("status").equals("ok")){
+                if(params.containsKey("status")){
+                    if(params.get("status").equals("ok")){
                         //login successful
                         String token = params.get("code");
                         String refreshToken = params.get("refresh_code");
@@ -233,7 +235,7 @@ public class LoginController {
                         loginWebView.setVisible(false);
                         SEAGridDialogHelper.showInformationDialog("Login Failed", "Unauthorized login",
                                 "You don't have permission to access this client." +
-                                " Please use a correct user credentials and try again.", stage);
+                                        " Please use a correct user credentials and try again.", stage);
                         loginWebView.setVisible(true);
                     }
                 }

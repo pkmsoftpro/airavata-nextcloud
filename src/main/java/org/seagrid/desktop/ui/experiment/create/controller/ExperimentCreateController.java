@@ -17,7 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  *
-*/
+ */
 package org.seagrid.desktop.ui.experiment.create.controller;
 
 import javafx.concurrent.Service;
@@ -86,7 +86,13 @@ public class ExperimentCreateController {
     public GridPane expCreateInputsGridPane;
 
     @FXML
+    public GridPane expCreatePrestageFiles;
+
+    @FXML
     public Label expCreateTitle;
+
+    @FXML
+    public Label preStageTitle;
 
     @FXML
     private Label expCreateWallTimeLabel;
@@ -129,6 +135,12 @@ public class ExperimentCreateController {
 
     @FXML
     private Button expSaveButton;
+
+    @FXML
+    private Button pickFile;
+
+    @FXML
+    public Label chosenFile;
 
     @FXML
     private Button expSaveLaunchButton;
@@ -694,6 +706,26 @@ public class ExperimentCreateController {
         }
     }
 
+    @FXML
+    public void getPreUploadedRemoteFile() {
+        chosenFile.setTranslateX(20);
+        chosenFile.setTranslateY(1);
+        try {
+            String selectedRemoteFilePath = showSelectRemoteFile();
+            File file = new File(selectedRemoteFilePath);
+            if(selectedRemoteFilePath!=null)chosenFile.setText(file.getName());
+            else chosenFile.setText(null);
+            if(selectedRemoteFilePath != null && !selectedRemoteFilePath.isEmpty()) {
+                selectedRemoteFilePath = remoteDataDirRoot + (selectedRemoteFilePath.startsWith("/")
+                        ? selectedRemoteFilePath.substring(1) : selectedRemoteFilePath);
+
+            }
+        } catch (IOException e) {
+            SEAGridDialogHelper.showExceptionDialogAndWait(e, "Exception Dialog", pickFile.getScene().getWindow(),
+                    "Failed to load remote file picker");
+        }
+    }
+
     private void handleExperimentFileSelect(InputDataObjectType inputDataObjectType, HBox hBox, Button localFilePickBtn,
                                             Button remoteFilePickBtn,File selectedFile){
         if (selectedFile != null) {
@@ -737,7 +769,7 @@ public class ExperimentCreateController {
     }
 
     private void handleMultipleExperimentFileSelect(InputDataObjectType inputDataObjectType, HBox hBox, Button localFilePickBtn,
-                                            Button remoteFilePickBtn,List<File> selectedFiles){
+                                                    Button remoteFilePickBtn,List<File> selectedFiles){
         List<File> nonNullSelectedFiles = new ArrayList<>();
         int i = 0;
         hBox.getChildren().clear();
@@ -1061,7 +1093,7 @@ public class ExperimentCreateController {
             @Override
             protected Task<Boolean> createTask() {
                 try {
-                     return new NextcloudFileDownloadTask(remotePath.toString(), localPath);
+                    return new NextcloudFileDownloadTask(remotePath.toString(), localPath);
                 } catch (Exception e) {
                     e.printStackTrace();
                     SEAGridDialogHelper.showExceptionDialogAndWait(e, "Exception Dialog", expCreateNameField.getScene().getWindow(),
