@@ -86,7 +86,13 @@ public class ExperimentCreateController {
     public GridPane expCreateInputsGridPane;
 
     @FXML
+    public GridPane expCreatePrestageFiles;
+
+    @FXML
     public Label expCreateTitle;
+
+    @FXML
+    public Label preStageTitle;
 
     @FXML
     private Label expCreateWallTimeLabel;
@@ -129,6 +135,12 @@ public class ExperimentCreateController {
 
     @FXML
     private Button expSaveButton;
+
+    @FXML
+    private Button pickFile;
+
+    @FXML
+    public Label chosenFile;
 
     @FXML
     private Button expSaveLaunchButton;
@@ -458,6 +470,25 @@ public class ExperimentCreateController {
                 gaussianInputs.get(0).setValue(tempFilePath);
                 updateExperimentInputs(gaussianInputs, true);
             }
+        }
+    }
+
+    @FXML
+    private void getPreUploadedRemoteFile() {
+        chosenFile.setTranslateX(20);
+        chosenFile.setTranslateY(1);
+        try {
+            String selectedRemoteFilePath = showSelectRemoteFile();
+            File file = new File(selectedRemoteFilePath);
+            if(selectedRemoteFilePath!=null)chosenFile.setText(file.getName());
+            else chosenFile.setText(null);
+            if(selectedRemoteFilePath != null && !selectedRemoteFilePath.isEmpty()) {
+                selectedRemoteFilePath = remoteDataDirRoot + (selectedRemoteFilePath.startsWith("/")
+                        ? selectedRemoteFilePath.substring(1) : selectedRemoteFilePath);
+            }
+        } catch (IOException e) {
+            SEAGridDialogHelper.showExceptionDialogAndWait(e, "Exception Dialog", pickFile.getScene().getWindow(),
+                    "Failed to load remote file picker");
         }
     }
 

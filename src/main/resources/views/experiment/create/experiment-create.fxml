@@ -5,6 +5,8 @@
 <?import javafx.collections.FXCollections?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
@@ -111,6 +113,39 @@
           </rowConstraints>
           <VBox.margin>
             <Insets bottom="5.0" left="20.0" right="5.0" top="2.0" />
+          </VBox.margin>
+        </GridPane>
+        <GridPane fx:id="expCreatePrestageFiles" alignment="BASELINE_CENTER" disable="false" focusTraversable="false" gridLinesVisible="false" hgap="10.0" prefHeight="-1.0" prefWidth="598.0" vgap="3.0" visible="true" VBox.vgrow="SOMETIMES">
+          <children>
+            <Label fx:id="preStageTitle" prefWidth="228.0" text="Prestage Upload Files" textAlignment="RIGHT" GridPane.columnIndex="0" GridPane.rowIndex="0">
+              <font>
+                <Font name="System Bold" size="16.0" />
+              </font>
+            </Label>
+            <Label text="Select File" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <Button fx:id="pickFile" mnemonicParsing="false" onAction="#getPreUploadedRemoteFile" text="" GridPane.columnIndex="1" GridPane.rowIndex="1">
+              <graphic>
+                <ImageView>
+                  <image>
+                    <Image url="/images/remote-storage.png" />
+                  </image>
+                </ImageView>
+              </graphic>
+            </Button>
+            <Label fx:id="chosenFile" maxHeight="25.0" prefHeight="25.0" prefWidth="788.0" text="" wrapText="false" GridPane.columnIndex="2" GridPane.rowIndex="1" VBox.vgrow="NEVER">
+            </Label>
+          </children>
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="335.0" minWidth="10.0" prefWidth="277.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="20.0" minWidth="10.0" prefWidth="20.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="418.0" minWidth="10.0" prefWidth="318.0" />
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="39.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+          </rowConstraints>
+          <VBox.margin>
+            <Insets bottom="3.0" left="20.0" right="5.0" top="5.0" />
           </VBox.margin>
         </GridPane>
         <HBox alignment="CENTER_LEFT" VBox.vgrow="NEVER">
