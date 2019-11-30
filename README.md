@@ -5,8 +5,8 @@ Team Nextcloud Integration
 
 Team Members:
 
-#Karan Kotabagi
-#Prashant Kumar Modak
+#Karan Kotabagi  
+#Prashant Kumar Modak  
 
 ##Project Ideation
 
